@@ -13,10 +13,10 @@ class App extends Component {
     super(props);
     this.state = {
       date: [
-        { name: 'Andrey H.', salary: 1000, increase: true, id: 1 },
-        { name: 'Ivan Y.', salary: 300, increase: false, id: 2 },
-        { name: 'Alex M.', salary: 500, increase: false, id: 3 },
-        { name: 'Helen G.', salary: 1500, increase: false, id: 4 },
+        { name: 'Andrey H.', salary: 1000, increase: true, like: false, id: 1 },
+        { name: 'Ivan Y.', salary: 300, increase: false, like: true, id: 2 },
+        { name: 'Alex M.', salary: 500, increase: false, like: false, id: 3 },
+        { name: 'Helen G.', salary: 1500, increase: false, like: false, id: 4 },
       ]
     }
     this.maxId = 5;
@@ -35,6 +35,7 @@ class App extends Component {
       name,
       salary,
       increase: false,
+      like: false,
       id: this.maxId++
     }
 
@@ -46,10 +47,27 @@ class App extends Component {
     });
   }
 
+  onToggleProp = (id, prop) => {
+    this.setState(({ date }) => ({
+      date: date.map(item => {
+        if (item.id === id) {
+          return { ...item, [prop]: !item[prop] }
+        }
+        return item;
+      })
+    }))
+  }
+
+  onToggleRise = (id) => {
+    console.log(`Rise this ${id}`)
+  }
+
   render() {
+    const employees = this.state.date.length;
+    const increased = this.state.date.filter(item => item.increase).length;
     return (
       <div className="app">
-        <AppInfo />
+        <AppInfo employees={employees} increased={increased} />
 
         <div className="search-panel">
           <SearchPanel />
@@ -58,7 +76,8 @@ class App extends Component {
 
         <EmployeesList
           date={this.state.date}
-          onDelete={this.deleteItem} />
+          onDelete={this.deleteItem}
+          onToggleProp={this.onToggleProp} />
         <EmployeesAddForm onAdd={this.addUser} />
       </div>
     );
